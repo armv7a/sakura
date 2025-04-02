@@ -1,4 +1,4 @@
-name: Build Evelion 1.2 Solution (with Submodules)
+name: Build Evelion 1.2 Solution (Fixed Direct3D Link)
 
 on:
   push:
@@ -11,34 +11,35 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    # 1. 检出主仓库并初始化子模块
+    # 1. 检出代码（含子模块）
     - uses: actions/checkout@v4
       with:
-        submodules: recursive  # 关键：递归初始化子模块
-        fetch-depth: 0        # 获取完整历史（某些子模块需要）
+        submodules: recursive
 
     # 2. 设置 MSBuild
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1
 
-    # 3. 还原 NuGet 包（包括子模块的依赖）
-    - name: Restore NuGet packages
-      run: nuget restore "sakura.sln"
+    # 3. 验证 Windows SDK 是否存在
+    - name: Check Windows SDK
+      run: |
+        echo "Windows SDK 路径:"
+        ls "C:\Program Files (x86)\Windows Kits\10\Lib"
 
-    # 4. 构建解决方案（x86 Release）
+    # 4. 构建解决方案（强制使用 Windows SDK 默认路径）
     - name: Build Solution
       run: |
-        # 确保输出目录存在
+        # 创建输出目录
         mkdir ..\build_output
-        msbuild "sakura.sln" /p:Configuration=Release /p:Platform="x86" /p:OutputPath=..\build_output
+        # 编译时显式指定 SDK 版本和工具集
+        msbuild "sakura.sln" /p:Configuration=Release /p:Platform="x86" ^
+          /p:PlatformToolset=v143 ^
+          /p:WindowsTargetPlatformVersion=10.0.19041.0 ^
+          /p:OutputPath=..\build_output
 
-    # 5. 验证输出文件（调试用）
-    - name: List build output
-      run: dir ..\build_output /s
-
-    # 6. 上传制品
+    # 5. 上传制品
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: build-output
-        path: ..\build_output\*  # 明确指定上传内容
+        path: ..\build_output\*

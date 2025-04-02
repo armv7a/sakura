@@ -1,0 +1,29 @@
+name: Build Evelion 1.2 Solution
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1
+    
+    - name: Restore NuGet packages
+      run: nuget restore "sakura.sln"  # 替换为实际的.sln文件名
+    
+    - name: Build Solution
+      run: msbuild "sakura.sln" /p:Configuration=Release /p:Platform="x86" /p:OutputPath=../build_output
+    
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-output
+        path: ./*

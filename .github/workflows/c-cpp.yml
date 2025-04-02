@@ -1,4 +1,4 @@
-name: Build Evelion 1.2 Solution (Fixed Direct3D Link)
+name: Build Evelion 1.2 Solution (Final Fix)
 
 on:
   push:
@@ -11,32 +11,30 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    # 1. 检出代码（含子模块）
     - uses: actions/checkout@v4
       with:
         submodules: recursive
 
-    # 2. 设置 MSBuild
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1
 
-    # 3. 验证 Windows SDK 是否存在
-    - name: Check Windows SDK
+    - name: Install Windows SDK
       run: |
-        echo "Windows SDK 路径:"
-        ls "C:\Program Files (x86)\Windows Kits\10\Lib"
+        # 确保安装完整 Windows SDK
+        choco install -y windows-sdk-10.1
 
-    # 4. 构建解决方案（修复换行符问题）
+    - name: Create required lib directory
+      run: |
+        # 创建项目期望的目录结构
+        mkdir Lib
+        mkdir Lib\x86
+        # 从 Windows SDK 复制所需库文件
+        copy "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x86\d3d11.lib" Lib\x86\
+
     - name: Build Solution
-      shell: cmd  # 强制使用 CMD 而非 PowerShell
       run: |
-        mkdir ..\build_output
-        msbuild "sakura.sln" /p:Configuration=Release /p:Platform="x86" ^
-          /p:PlatformToolset=v143 ^
-          /p:WindowsTargetPlatformVersion=10.0.19041.0 ^
-          /p:OutputPath=..\build_output
+        msbuild "sakura.sln" /p:Configuration=Release /p:Platform="x86" /p:PlatformToolset=v143 /p:WindowsTargetPlatformVersion=10.0.19041.0 /p:OutputPath=..\build_output
 
-    # 5. 上传制品
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:

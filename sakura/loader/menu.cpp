@@ -59,13 +59,13 @@ void Sakura::Inject()
         moduleExists = false;
     }
 
-    if (Injector::GetProcessInfo("hl.exe", &processInfo) == false && moduleExists)
+    if (Injector::GetProcessInfo("MAE-Protect.exe", &processInfo) == false && moduleExists)
     {
-        sprintf(statusText, /*hl.exe is missing!*/XorStr<0x82, 19, 0x7A22A4AD>("\xEA\xEF\xAA\xE0\xFE\xE2\xA8\xE0\xF9\xAB\xE1\xE4\xFD\xFC\xF9\xFF\xF5\xB2" + 0x7A22A4AD).s);
+        sprintf(statusText, /*MAE-Protect.exe is missing!*/XorStr<0x82, 19, 0x7A22A4AD>("\xEA\xEF\xAA\xE0\xFE\xE2\xA8\xE0\xF9\xAB\xE1\xE4\xFD\xFC\xF9\xFF\xF5\xB2" + 0x7A22A4AD).s);
         processExists = false;
     }
 
-    if (Injector::InjectModule("hl.exe", modulePath) == true && moduleExists && processExists)
+    if (Injector::InjectModule("MAE-Protect.exe", modulePath) == true && moduleExists && processExists)
     {
         sprintf(statusText, /*Injected!*/XorStr<0xB0, 10, 0xE54EBF17>("\xF9\xDF\xD8\xD6\xD7\xC1\xD3\xD3\x99" + 0xE54EBF17).s);
 

@@ -1,4 +1,4 @@
-name: Build Evelion 1.2 Solution (Final Fix)
+name: Build Sakura CI
 
 on:
   push:
@@ -20,15 +20,12 @@ jobs:
 
     - name: Install Windows SDK
       run: |
-        # 确保安装完整 Windows SDK
         choco install -y windows-sdk-10.1
 
     - name: Create required lib directory
       run: |
-        # 创建项目期望的目录结构
         mkdir Lib
         mkdir Lib\x86
-        # 从 Windows SDK 复制所需库文件
         copy "C:\Program Files (x86)\Windows Kits\10\Lib\10.0.19041.0\um\x86\d3d11.lib" Lib\x86\
 
     - name: Build Solution
@@ -39,4 +36,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: build-output
-        path: ./*
+        path: ./sakura/sakura/*

@@ -3,7 +3,7 @@
   <a href="https://github.com/rbl-dot/sakura"><img src="https://i.imgur.com/WFsf63R.png" alt="Sakura" width="200"></a>
   <br>
   Sakura
-  <br>
+  <br> 
 </h1>
 
 <div align="center">
